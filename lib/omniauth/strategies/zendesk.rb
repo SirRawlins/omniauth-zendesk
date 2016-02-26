@@ -15,7 +15,7 @@ module OmniAuth
 
       # Additional token params required by Zendesk
       # to determine what type of token you want.
-      option :token_params, { :grant_type => 'authorization_code' }
+      option :token_params, { :grant_type => 'authorization_code', :scope => 'read' }
 
       # Set the unique identifier.
       # Zendesk doesn't pass us anything back during the 
@@ -56,15 +56,6 @@ module OmniAuth
         # TODO: Could we use the :setup option and a Proc
         #       to handle this rather than call here? 
         set_omniauth_zendesk_urls
-
-        # Continue the request as usual.
-        super
-      end
-
-      def token_params
-        # Merge the scope for the provider into
-        # the token params request to pass to Zendesk.
-        options.token_params[:scope] = options[:scope]
 
         # Continue the request as usual.
         super

@@ -17,13 +17,19 @@ module OmniAuth
       # to determine what type of token you want.
       option :token_params, { :grant_type => 'authorization_code' }
 
+      # Set the unique identifier.
+      # Zendesk doesn't pass us anything back during the 
+      # token request so we'll make an additional request
+      # to get the users ID.
+      uid do; info[:id]; end
+
       # A more friendly breakdown of the
       # authenticated user data from Zendesk.
       info do; raw_info[:user]; end
 
       # Basic raw user data returned
       # from the Zendesk API when authenticated.
-      extra do; {'raw_info' => raw_info}; end
+      extra do; {:raw_info => raw_info}; end
 
       # Modify some settings before the request
       # phase to account for the tenanted subdomain

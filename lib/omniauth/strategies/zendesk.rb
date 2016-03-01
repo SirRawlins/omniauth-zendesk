@@ -17,6 +17,12 @@ module OmniAuth
       # to determine what type of token you want.
       option :token_params, { :grant_type => 'authorization_code', :scope => 'read' }
 
+      # Auth Hashes.
+      # As per the schema details https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema#schema-10-and-later
+      #
+      # Contains all the details of the user, and other misc data about the authorized
+      # endpoint which may be useful.
+
       # Set the unique identifier.
       # Zendesk doesn't pass us anything back during the 
       # token request so we'll make an additional request
@@ -29,7 +35,12 @@ module OmniAuth
 
       # Basic raw user data returned
       # from the Zendesk API when authenticated.
-      extra do; {:raw_info => raw_info}; end
+      extra do
+        {
+          :raw_info => raw_info, # Raw unchanged data from the API about the user.
+          :api_endpoint => options[:client_options][:site] # API points differ for each site via subdomain.
+        }
+      end
 
       # Modify some settings before the request
       # phase to account for the tenanted subdomain
@@ -91,7 +102,7 @@ module OmniAuth
 
           # Update the client options with the dynamic endppints
           # based on the account subdomain given to us.
-          options["client_options"] = {
+          options[:client_options] = {
             :site => "https://#{account}.zendesk.com",
             # TODO: Do we need to set these as absolute paths?
             :authorize_url => "https://#{account}.zendesk.com/oauth/authorizations/new",
